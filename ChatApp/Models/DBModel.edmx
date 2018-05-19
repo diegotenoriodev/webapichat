@@ -1,0 +1,436 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ChatDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ChatUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdRoom" Type="int" Nullable="false" />
+          <Property Name="IdSender" Type="int" Nullable="false" />
+          <Property Name="IdReceiver" Type="int" />
+          <Property Name="IdRepliedMessage" Type="bigint" />
+          <Property Name="Content" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="DateTimeSent" Type="datetime" Nullable="false" />
+          <Property Name="CountUp" Type="int" Nullable="false" />
+          <Property Name="CountDown" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessageDown">
+          <Key>
+            <PropertyRef Name="IdMessage" />
+            <PropertyRef Name="IdUser" />
+          </Key>
+          <Property Name="IdMessage" Type="bigint" Nullable="false" />
+          <Property Name="IdUser" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MessageUp">
+          <Key>
+            <PropertyRef Name="IdMessage" />
+            <PropertyRef Name="IdUser" />
+          </Key>
+          <Property Name="IdMessage" Type="bigint" Nullable="false" />
+          <Property Name="IdUser" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="512" />
+          <Property Name="IdOwner" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_MESSAGE_RECEIVER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="0..1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdReceiver" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_Reply">
+          <End Role="Message" Type="Self.Message" Multiplicity="0..1" />
+          <End Role="Message1" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message1">
+              <PropertyRef Name="IdRepliedMessage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_ROOM">
+          <End Role="Room" Type="Self.Room" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdRoom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_SENDER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdSender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGEDown_MESSAGE">
+          <End Role="Message" Type="Self.Message" Multiplicity="1" />
+          <End Role="MessageDown" Type="Self.MessageDown" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageDown">
+              <PropertyRef Name="IdMessage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGEDown_User">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="MessageDown" Type="Self.MessageDown" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageDown">
+              <PropertyRef Name="IdUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGEUP_MESSAGE">
+          <End Role="Message" Type="Self.Message" Multiplicity="1" />
+          <End Role="MessageUp" Type="Self.MessageUp" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageUp">
+              <PropertyRef Name="IdMessage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGEUP_User">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="MessageUp" Type="Self.MessageUp" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MessageUp">
+              <PropertyRef Name="IdUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ROOM_OWNER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="Room" Type="Self.Room" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Room">
+              <PropertyRef Name="IdOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ChatDBModelStoreContainer">
+          <EntitySet Name="ChatUser" EntityType="Self.ChatUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Message" EntityType="Self.Message" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageDown" EntityType="Self.MessageDown" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MessageUp" EntityType="Self.MessageUp" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Room" EntityType="Self.Room" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_MESSAGE_RECEIVER" Association="Self.FK_MESSAGE_RECEIVER">
+            <End Role="ChatUser" EntitySet="ChatUser" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_Reply" Association="Self.FK_MESSAGE_Reply">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="Message1" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_ROOM" Association="Self.FK_MESSAGE_ROOM">
+            <End Role="Room" EntitySet="Room" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_SENDER" Association="Self.FK_MESSAGE_SENDER">
+            <End Role="ChatUser" EntitySet="ChatUser" />
+            <End Role="Message" EntitySet="Message" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGEDown_MESSAGE" Association="Self.FK_MESSAGEDown_MESSAGE">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="MessageDown" EntitySet="MessageDown" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGEDown_User" Association="Self.FK_MESSAGEDown_User">
+            <End Role="ChatUser" EntitySet="ChatUser" />
+            <End Role="MessageDown" EntitySet="MessageDown" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGEUP_MESSAGE" Association="Self.FK_MESSAGEUP_MESSAGE">
+            <End Role="Message" EntitySet="Message" />
+            <End Role="MessageUp" EntitySet="MessageUp" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGEUP_User" Association="Self.FK_MESSAGEUP_User">
+            <End Role="ChatUser" EntitySet="ChatUser" />
+            <End Role="MessageUp" EntitySet="MessageUp" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ROOM_OWNER" Association="Self.FK_ROOM_OWNER">
+            <End Role="ChatUser" EntitySet="ChatUser" />
+            <End Role="Room" EntitySet="Room" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ChatDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ChatUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Messages" Relationship="Self.FK_MESSAGE_RECEIVER" FromRole="ChatUser" ToRole="Message" />
+          <NavigationProperty Name="Messages1" Relationship="Self.FK_MESSAGE_SENDER" FromRole="ChatUser" ToRole="Message" />
+          <NavigationProperty Name="Rooms" Relationship="Self.FK_ROOM_OWNER" FromRole="ChatUser" ToRole="Room" />
+          <NavigationProperty Name="MessageDown" Relationship="Self.MessageDown" FromRole="ChatUser" ToRole="Message" />
+          <NavigationProperty Name="MessageUp" Relationship="Self.MessageUp" FromRole="ChatUser" ToRole="Message" />
+        </EntityType>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdRoom" Type="Int32" Nullable="false" />
+          <Property Name="IdSender" Type="Int32" Nullable="false" />
+          <Property Name="IdReceiver" Type="Int32" />
+          <Property Name="IdRepliedMessage" Type="Int64" />
+          <Property Name="Content" Type="String" MaxLength="256" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DateTimeSent" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CountUp" Type="Int32" Nullable="false" />
+          <Property Name="CountDown" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Receiver" Relationship="Self.FK_MESSAGE_RECEIVER" FromRole="Message" ToRole="ChatUser" />
+          <NavigationProperty Name="Sender" Relationship="Self.FK_MESSAGE_SENDER" FromRole="Message" ToRole="ChatUser" />
+          <NavigationProperty Name="Replies" Relationship="Self.FK_MESSAGE_Reply" FromRole="Message" ToRole="Message1" />
+          <NavigationProperty Name="RepliedMessage" Relationship="Self.FK_MESSAGE_Reply" FromRole="Message1" ToRole="Message" />
+          <NavigationProperty Name="Room" Relationship="Self.FK_MESSAGE_ROOM" FromRole="Message" ToRole="Room" />
+          <NavigationProperty Name="UsersDown" Relationship="Self.MessageDown" FromRole="Message" ToRole="ChatUser" />
+          <NavigationProperty Name="UsersUp" Relationship="Self.MessageUp" FromRole="Message" ToRole="ChatUser" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="128" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="512" FixedLength="false" Unicode="false" />
+          <Property Name="IdOwner" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ChatUser" Relationship="Self.FK_ROOM_OWNER" FromRole="Room" ToRole="ChatUser" />
+          <NavigationProperty Name="Messages" Relationship="Self.FK_MESSAGE_ROOM" FromRole="Room" ToRole="Message" />
+        </EntityType>
+        <Association Name="FK_MESSAGE_RECEIVER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="0..1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdReceiver" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_SENDER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdSender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ROOM_OWNER">
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="1" />
+          <End Role="Room" Type="Self.Room" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChatUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Room">
+              <PropertyRef Name="IdOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_Reply">
+          <End Role="Message" Type="Self.Message" Multiplicity="0..1" />
+          <End Role="Message1" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Message">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message1">
+              <PropertyRef Name="IdRepliedMessage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MESSAGE_ROOM">
+          <End Role="Room" Type="Self.Room" Multiplicity="1" />
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Room">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Message">
+              <PropertyRef Name="IdRoom" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="MessageDown">
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="*" />
+        </Association>
+        <Association Name="MessageUp">
+          <End Role="Message" Type="Self.Message" Multiplicity="*" />
+          <End Role="ChatUser" Type="Self.ChatUser" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="ChatDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ChatUsers" EntityType="Self.ChatUser" />
+          <EntitySet Name="Messages" EntityType="Self.Message" />
+          <EntitySet Name="Rooms" EntityType="Self.Room" />
+          <AssociationSet Name="FK_MESSAGE_RECEIVER" Association="Self.FK_MESSAGE_RECEIVER">
+            <End Role="ChatUser" EntitySet="ChatUsers" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_SENDER" Association="Self.FK_MESSAGE_SENDER">
+            <End Role="ChatUser" EntitySet="ChatUsers" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ROOM_OWNER" Association="Self.FK_ROOM_OWNER">
+            <End Role="ChatUser" EntitySet="ChatUsers" />
+            <End Role="Room" EntitySet="Rooms" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_Reply" Association="Self.FK_MESSAGE_Reply">
+            <End Role="Message" EntitySet="Messages" />
+            <End Role="Message1" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MESSAGE_ROOM" Association="Self.FK_MESSAGE_ROOM">
+            <End Role="Room" EntitySet="Rooms" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="MessageDown" Association="Self.MessageDown">
+            <End Role="Message" EntitySet="Messages" />
+            <End Role="ChatUser" EntitySet="ChatUsers" />
+          </AssociationSet>
+          <AssociationSet Name="MessageUp" Association="Self.MessageUp">
+            <End Role="Message" EntitySet="Messages" />
+            <End Role="ChatUser" EntitySet="ChatUsers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ChatDBModelStoreContainer" CdmEntityContainer="ChatDBEntities1">
+          <EntitySetMapping Name="ChatUsers">
+            <EntityTypeMapping TypeName="ChatDBModel.ChatUser">
+              <MappingFragment StoreEntitySet="ChatUser">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Messages">
+            <EntityTypeMapping TypeName="ChatDBModel.Message">
+              <MappingFragment StoreEntitySet="Message">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IdRoom" ColumnName="IdRoom" />
+                <ScalarProperty Name="IdSender" ColumnName="IdSender" />
+                <ScalarProperty Name="IdReceiver" ColumnName="IdReceiver" />
+                <ScalarProperty Name="IdRepliedMessage" ColumnName="IdRepliedMessage" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="DateTimeSent" ColumnName="DateTimeSent" />
+                <ScalarProperty Name="CountUp" ColumnName="CountUp" />
+                <ScalarProperty Name="CountDown" ColumnName="CountDown" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rooms">
+            <EntityTypeMapping TypeName="ChatDBModel.Room">
+              <MappingFragment StoreEntitySet="Room">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IdOwner" ColumnName="IdOwner" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="MessageDown" TypeName="ChatDBModel.MessageDown" StoreEntitySet="MessageDown">
+            <EndProperty Name="Message">
+              <ScalarProperty Name="Id" ColumnName="IdMessage" />
+            </EndProperty>
+            <EndProperty Name="ChatUser">
+              <ScalarProperty Name="Id" ColumnName="IdUser" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="MessageUp" TypeName="ChatDBModel.MessageUp" StoreEntitySet="MessageUp">
+            <EndProperty Name="Message">
+              <ScalarProperty Name="Id" ColumnName="IdMessage" />
+            </EndProperty>
+            <EndProperty Name="ChatUser">
+              <ScalarProperty Name="Id" ColumnName="IdUser" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
